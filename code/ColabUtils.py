@@ -106,6 +106,7 @@ def deflate_file(filepath):
         print('File appears to be deflated');
 
 def gdrive_upload(drive,filepath):
-    file = drive.CreateFile()
-    file.SetContentFile(filepath)
-    file.Upload()
+    f = drive.CreateFile()
+    f['title'] = os.path.basename(filepath)
+    f.SetContentFile(filepath)
+    f.Upload()
