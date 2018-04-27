@@ -29,10 +29,9 @@ def git_clone(user,project,base_url='https://github.com',codedirs=[]):
 
 def update_path(codedirs):
     for cdir in codedirs:
-        rdir = os.path.join(".",project,cdir)
-        if os.path.exists(rdir):
-            if rdir not in sys.path:
-                sys.path.append(rdir);
+        if os.path.exists(cdir):
+            if cdir not in sys.path:
+                sys.path.append(cdir);
         else:
             print('WARN: Specified code dir does not exist'+cdir)
 
