@@ -25,7 +25,8 @@ def git_clone(user,project,base_url='https://github.com',codedirs=[]):
     url = '/'.join([base_url,user,project])
     status = subprocess.call(['rm', '-rf', project])
     status = subprocess.call(['git', 'clone', url]);
-    update_path([os.path.join(pwd(),project,cdir) for cdir in codedirs]);
+    cwd = os.getcwd();
+    update_path([os.path.join(cwd,project,cdir) for cdir in codedirs]);
 
 def update_path(codedirs):
     for cdir in codedirs:
