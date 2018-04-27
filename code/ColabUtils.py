@@ -31,10 +31,10 @@ def verify_gpu():
     device_name = tf.test.gpu_device_name()
     if device_name != '/device:GPU:0':
         print('GPU device not found')
-        has_gpu = True
+        has_gpu = False
     else:
         print('Found GPU at: {}'.format(device_name))
-        has_gpu = False
+        has_gpu = True
     return has_gpu
 
 def run_shell_commands(cmdlist,delim='+'*40,echo=True):
