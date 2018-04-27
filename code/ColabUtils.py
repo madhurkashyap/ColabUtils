@@ -46,14 +46,20 @@ def verify_gpu():
         has_gpu = False
     return has_gpu
 
+def run_shell_commands(cmdlist,delim='+'*40,echo=True):
+    for cmd in cmdlist:
+        if echo: print(delim);
+        log=subprocess.check_output(cmd);
+        if echo: print(log.decode());
+    if echo: print(delim)
+    
 def report_resources():
-    !echo '++++++++++++++++++++++++++++++++++'
-    !df -h .
-    !echo '++++++++++++++++++++++++++++++++++'
-    !cat /proc/meminfo | grep -i mem
-    !echo '++++++++++++++++++++++++++++++++++'
-    !cat /proc/cpuinfo | grep -i cpu
-    !echo '++++++++++++++++++++++++++++++++++'
+    cmdlist=[
+        ['df','-h'],
+        ['grep','-i','mem','/proc/meminfo'],
+        ['grep','-i','cpu','/proc/cpuinfo'],
+    ]
+    run_shell_commands(cmdlist);
 
 def install_packages(pkgs):
     for pkg in pkgs:
