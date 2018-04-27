@@ -9,19 +9,8 @@ import sys
 import subprocess
 import tensorflow as tf
 
-def authenticate():
-    from pydrive.auth import GoogleAuth
-    from pydrive.drive import GoogleDrive
-    from google.colab import auth
-    from oauth2client.client import GoogleCredentials
-    auth.authenticate_user()
-    gauth = GoogleAuth()
-    gauth.credentials = GoogleCredentials.get_application_default()
-    # An interactive procedure -- asks to go to a webform and get
-    # Session specific authentication
-    drive = GoogleDrive(gauth)
-
-def git_clone(user,project,base_url='https://github.com',codedirs=[]):
+def git_clone(user,project,base_url='https://github.com',codedirs=[]
+              verbose=False):
     url = '/'.join([base_url,user,project])
     status = subprocess.call(['rm', '-rf', project])
     status = subprocess.call(['git', 'clone', url]);
@@ -61,10 +50,30 @@ def report_resources():
     ]
     run_shell_commands(cmdlist);
 
+def authenticate():
+    from google.colab import auth
+    from oauth2client.client import GoogleCredentials
+    print("Performing Google Account authentication for session ...")
+    auth.authenticate_user()
+
 def install_packages(pkgs):
+    import pip
     for pkg in pkgs:
         print("Installing package "+pkg+" ...");
-        status = subprocess.call(['pip', 'install', '-U', '-q', pkg])
+        cmd=[sys.executable, '-m', 'pip', 'install', pkg]
+        status = subprocess.call(cmd)
         if status!=0:
             print("Errors detected during package installation");
 
+def setup_drive():
+    from pydrive.auth import GoogleAuth
+    from pydrive.drive import GoogleDrive
+    from google.colab import auth
+    from oauth2client.client import GoogleCredentials
+    print("Configuring Google Drive ...")
+    gauth = GoogleAuth()
+    gauth.credentials = GoogleCredentials.get_application_default()
+    # An interactive procedure -- asks to go to a webform and get
+    # Session specific authentication
+    drive = GoogleDrive(gauth)
+    return drive
