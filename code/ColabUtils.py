@@ -78,23 +78,30 @@ def setup_gdrive():
     return drive
 
 def gdrive_download(drive,filepath,fileid,deflate=True):
+    if os.path.exists(filepath):
+        print("File already exists");
+        return
+    print("Downloading file "+filepath+" ...")
     file1 = drive.CreateFile({'id':fileid});
     file1.GetContentFile(filepath);
-    if deflate:
-        if re.match('\.tar\.gz|.tgz',filepath):
-            cmd = ['tar', '-zxvf', filepath];
-        elif re.match('\.tar$',filepath):
-            cmd = ['tar', '-xvf', filepath];
-        elif re.match('.zip',filepath):
-            cmd = ['unzip', filepath];
-        else:
-            cmd = [];
-        if len(cmd)>0:
-            status = subprocess.call(cmd);
-            if status>0:
-                print('Failed to deflate '+str(cmd));
-        else:
-            print('File appears to be deflated');
+    if deflate: deflate_file(filepath);
+
+def deflate_file(filepath):
+    if re.match('^.*(.tar.gz|.tgz)$',filepath):
+        cmd = ['tar', '-zxvf', filepath];
+    elif re.match('^.*.tar$',filepath):
+        cmd = ['tar', '-xvf', filepath];
+    elif re.match('^.*.zip$',filepath):
+        cmd = ['unzip', filepath];
+    else:
+        cmd = [];
+    if len(cmd)>0:
+        print("Deflating "+' '.join(cmd))
+        status = subprocess.call(cmd);
+        if status>0:
+            print('Failed to deflate '+' '.join(cmd));
+    else:
+        print('File appears to be deflated');
 
 def gdrive_upload(drive,filepath):
     file = drive.CreateFile()
