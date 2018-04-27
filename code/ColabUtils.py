@@ -24,7 +24,9 @@ def git_clone(user,project,base_url='https://github.com',codedirs=[]):
     url = '/'.join([base_url,user,project])
     !rm -rf {project}
     !git clone {url}
+    update_path(codedirs);
 
+def update_path(codedirs):
     for cdir in codedirs:
         rdir = os.path.join(".",project,cdir)
         if rdir not in sys.path:
