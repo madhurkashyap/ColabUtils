@@ -9,7 +9,7 @@ import sys
 import subprocess
 import tensorflow as tf
 
-def git_clone(user,project,base_url='https://github.com',codedirs=[]
+def git_clone(user,project,base_url='https://github.com',codedirs=[],
               verbose=False):
     url = '/'.join([base_url,user,project])
     status = subprocess.call(['rm', '-rf', project])
