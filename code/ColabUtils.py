@@ -6,6 +6,7 @@
 import re
 import os
 import sys
+import subprocess
 import tensorflow as tf
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
@@ -22,15 +23,18 @@ def authenticate():
 
 def git_clone(user,project,base_url='https://github.com',codedirs=[]):
     url = '/'.join([base_url,user,project])
-    !rm -rf {project}
-    !git clone {url}
+    status = subprocess.call(['rm', '-rf', project])
+    status = subprocess.call(['git', 'clone', url]);
     update_path(codedirs);
 
 def update_path(codedirs):
     for cdir in codedirs:
         rdir = os.path.join(".",project,cdir)
-        if rdir not in sys.path:
-            sys.path.append(rdir);
+        if os.path.exists(rdir):
+            if rdir not in sys.path:
+                sys.path.append(rdir);
+        else:
+            print('WARN: Specified code dir does not exist'+cdir)
 
 def verify_gpu():
     device_name = tf.test.gpu_device_name()
@@ -51,10 +55,10 @@ def report_resources():
     !cat /proc/cpuinfo | grep -i cpu
     !echo '++++++++++++++++++++++++++++++++++'
 
-def install_packages(pkgs,pattern='(failed|error)'):
+def install_packages(pkgs):
     for pkg in pkgs:
         print("Installing package "+pkg+" ...");
-        log = !pip install -U -q {pkg}
-        if re.match(pattern,log):
-            print("Could not install package "+pkg);
+        status = subprocess.call(['pip', 'install', '-U', '-q', pkg])
+        if status!=0:
+            print("Errors detected during package installation");
 
