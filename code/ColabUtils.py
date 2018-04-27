@@ -1,8 +1,9 @@
-# Madhur Kashyap 2016EEZ8350 (madhurDOTkashyap  gmail)
+# Madhur Kashyap (madhurDOTkashyap  gmail)
 # Google Colaboratory Utilities for running projects on colab
 # Updated: Apr 27 2018
 
 
+import re
 import os
 import sys
 import tensorflow as tf
@@ -47,3 +48,11 @@ def report_resources():
     !echo '++++++++++++++++++++++++++++++++++'
     !cat /proc/cpuinfo | grep -i cpu
     !echo '++++++++++++++++++++++++++++++++++'
+
+def install_packages(pkgs,pattern='(failed|error)'):
+    for pkg in pkgs:
+        print("Installing package "+pkg+" ...");
+        log = !pip install -U -q {pkg}
+        if re.match(pattern,log):
+            print("Could not install package "+pkg);
+
