@@ -13,13 +13,15 @@ def git_clone(user,project,base_url='https://github.com',codedirs=[],
               verbose=False):
     url = '/'.join([base_url,user,project])
     status = subprocess.call(['rm', '-rf', project])
-    status = subprocess.call(['git', 'clone', url]);
+    log = subprocess.check_output(['git', 'clone', url]);
+    if verbose: print(log.decode());
     cwd = os.getcwd();
     update_path([os.path.join(cwd,project,cdir) for cdir in codedirs]);
 
 def update_path(codedirs):
     for cdir in codedirs:
         if os.path.exists(cdir):
+            print("INFO: Updating system path with "+cdir);
             if cdir not in sys.path:
                 sys.path.append(cdir);
         else:
