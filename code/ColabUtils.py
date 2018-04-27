@@ -57,7 +57,6 @@ def authenticate():
     auth.authenticate_user()
 
 def install_packages(pkgs):
-    import pip
     for pkg in pkgs:
         print("Installing package "+pkg+" ...");
         cmd=[sys.executable, '-m', 'pip', 'install', pkg]
@@ -65,7 +64,7 @@ def install_packages(pkgs):
         if status!=0:
             print("Errors detected during package installation");
 
-def setup_drive():
+def setup_gdrive():
     from pydrive.auth import GoogleAuth
     from pydrive.drive import GoogleDrive
     from google.colab import auth
@@ -77,3 +76,27 @@ def setup_drive():
     # Session specific authentication
     drive = GoogleDrive(gauth)
     return drive
+
+def gdrive_download(drive,filepath,fileid,deflate=True):
+    file1 = drive.CreateFile({'id':fileid});
+    file1.GetContentFile(filepath);
+    if deflate:
+        if re.match('\.tar\.gz|.tgz',filepath):
+            cmd = ['tar', '-zxvf', filepath];
+        elif re.match('\.tar$',filepath):
+            cmd = ['tar', '-xvf', filepath];
+        elif re.match('.zip',filepath):
+            cmd = ['unzip', filepath];
+        else:
+            cmd = [];
+        if len(cmd)>0:
+            status = subprocess.call(cmd);
+            if status>0:
+                print('Failed to deflate '+str(cmd));
+        else:
+            print('File appears to be deflated');
+
+def gdrive_upload(drive,filepath):
+    file = drive.CreateFile()
+    file.SetContentFile(filepath)
+    file.Upload()
