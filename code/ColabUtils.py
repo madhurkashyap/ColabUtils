@@ -57,6 +57,38 @@ def authenticate():
     from oauth2client.client import GoogleCredentials
     print("Performing Google Account authentication for session ...")
     auth.authenticate_user()
+    from oauth2client.client import GoogleCredentials
+    creds = GoogleCredentials.get_application_default()
+    return creds;
+
+def mount_gdrive(folder='gdrive'):
+    print("Installing google-drive-ocamlfuse for mounting gdrive");
+    cmds = [['apt-get','install','-y','-qq','software-properties-common',
+            'python-software-properties','module-init-tools']]
+    cmds.append(['add-apt-repository','-y','ppa:alessandro-strada/ppa']);
+    cmds.append(['apt-get', 'update','-qq']);
+    cmds.append(['apt-get','-y','install','-qq','google-drive-ocamlfuse','fuse']);
+    for cmd in cmds:
+        status = subprocess.call(cmd);
+        if status!=0:
+            print("Errors in installing google-drive-ocamlfuse");
+            return
+    creds = authenticate();
+    import getpass
+    print("Mounting google drive at "+'gdrive');
+    cmd = 'google-drive-ocamlfuse -headless -id='+\
+          creds.client_id+' -secret='+creds.client_secret+\
+          ' < /dev/null 2>&1 | grep URL'
+    log = subprocess.getoutput(cmd);
+    print(log);
+    vcode = getpass.getpass();
+    cmd = ['echo',vcode,'|','google-drive-ocamlfuse','-headless',
+            '-id='+creds.client_id,'-secret='+creds.client_secret];
+    subprocess.getoutput(' '.join(cmd));
+    subprocess.call(['mkdir','-p',folder])
+    status = subprocess.call(['google-drive-ocamlfuse',folder]);
+    if status!=0:
+        print("Could not mount the drive for authenticated account");
 
 def install_packages(pkgs):
     for pkg in pkgs:
