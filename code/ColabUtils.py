@@ -71,7 +71,7 @@ def mount_gdrive(folder='gdrive'):
     for cmd in cmds:
         status = subprocess.call(cmd);
         if status!=0:
-            print("Errors in installing google-drive-ocamlfuse");
+            print("Errors in installing google-drive-ocamlfuse: "+''.join(cmd));
             return
     creds = authenticate();
     import getpass
