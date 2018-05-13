@@ -63,8 +63,9 @@ def authenticate():
 
 def mount_gdrive(folder='gdrive'):
     print("Installing google-drive-ocamlfuse for mounting gdrive");
-    cmds = [['apt-get','install','-y','-qq','software-properties-common',
-            'python-software-properties','module-init-tools']]
+    cmds = [["apt-get", "update", "-qq"]];
+    cmds.append(['apt-get','install','-y','-qq','software-properties-common',
+            'python-software-properties','module-init-tools']);
     cmds.append(['add-apt-repository','-y','ppa:alessandro-strada/ppa']);
     cmds.append(['apt-get', 'update','-qq']);
     cmds.append(['apt-get','-y','install','-qq','google-drive-ocamlfuse','fuse']);
